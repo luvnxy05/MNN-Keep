@@ -37,6 +37,7 @@ fun Application.configureRouting() {
             } finally {
                 val path = call.request.path()
                 if (path.startsWith("/v1/")) {
+                    RequestStats.recordRequest((call.response.status()?.value ?: 500) < 400)
                     Timber.tag("RequestProcessing").i(
                         "HTTP %s %s -> %s %dms [%s]",
                         call.request.httpMethod.value,

@@ -1,5 +1,6 @@
 package com.alibaba.mnnllm.api.openai.network.utils
 
+import com.alibaba.mnnllm.api.openai.network.application.RequestStats
 import com.alibaba.mnnllm.api.openai.network.models.ChatCompletionResponse
 import com.alibaba.mnnllm.api.openai.network.models.Choice
 import com.alibaba.mnnllm.api.openai.network.models.CompletionChoice
@@ -72,6 +73,7 @@ class ChatResponseFormatter {
     fun createUsageFromMetrics(metrics: HashMap<String, Any>): Usage {
         val promptTokens = (metrics["prompt_len"] as? Long)?.toInt() ?: 0
         val completionTokens = (metrics["decode_len"] as? Long)?.toInt() ?: 0
+        RequestStats.recordTokens(promptTokens, completionTokens)
         return Usage(
             prompt_tokens = promptTokens,
             completion_tokens = completionTokens,

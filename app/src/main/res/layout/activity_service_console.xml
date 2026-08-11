@@ -137,6 +137,14 @@
                     android:text="@string/console_copy"
                     android:textColor="?attr/colorPrimary" />
             </LinearLayout>
+
+            <TextView
+                android:id="@+id/text_stats"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="8dp"
+                android:textColor="#888888"
+                android:textSize="12sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 
@@ -211,6 +219,20 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/console_stay_awake" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_export_config"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/console_export_config" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_import_config"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/console_import_config" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

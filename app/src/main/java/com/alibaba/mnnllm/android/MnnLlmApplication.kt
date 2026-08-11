@@ -5,6 +5,7 @@ package com.alibaba.mnnllm.android
 import android.app.Application
 import com.alibaba.mls.api.ApplicationProvider
 import com.alibaba.mls.api.download.ModelDownloadManager
+import com.alibaba.mnnllm.api.openai.network.application.RequestStats
 import com.alibaba.mnnllm.android.update.UpdateChecker
 import com.alibaba.mnnllm.android.utils.CrashUtil
 import com.alibaba.mnnllm.android.utils.CurrentActivityTracker
@@ -23,6 +24,7 @@ class MnnLlmApplication : Application() {
         ApplicationProvider.set(this)
         UpdateChecker.registerDownloadReceiver(applicationContext)
         CrashUtil.init(this)
+        RequestStats.init(this)
         instance = this
         DeviceName.init(this)
 

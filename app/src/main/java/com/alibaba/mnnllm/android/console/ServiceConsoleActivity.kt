@@ -8,8 +8,10 @@ import android.app.ActivityManager
 import android.os.BatteryManager
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Environment
 import android.provider.Settings
 import android.widget.Toast
+import androidx.core.content.FileProvider
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
@@ -25,6 +27,7 @@ import com.alibaba.mnnllm.api.openai.manager.ApiServiceManager
 import com.alibaba.mnnllm.api.openai.manager.CurrentModelManager
 import com.alibaba.mnnllm.api.openai.manager.ServerEventManager
 import com.alibaba.mnnllm.api.openai.service.ApiServerConfig
+import com.alibaba.mnnllm.api.openai.network.application.RequestStats
 import androidx.preference.PreferenceManager
 import com.alibaba.mnnllm.android.utils.CrashUtil
 import kotlinx.coroutines.launch
@@ -74,6 +77,8 @@ class ServiceConsoleActivity : AppCompatActivity() {
             ApiConsoleBottomSheetFragment().show(supportFragmentManager, "ApiConsoleBottomSheetFragment")
         }
         binding.buttonStayAwake.setOnClickListener { toggleStayAwake() }
+        binding.buttonExportConfig.setOnClickListener { exportConfig() }
+        binding.buttonImportConfig.setOnClickListener { importConfig() }
         binding.layoutModelRow.setOnClickListener { showModelPicker() }
         binding.buttonSwitchModel.setOnClickListener { showModelPicker() }
         binding.buttonCopyKey.setOnClickListener {
@@ -262,6 +267,7 @@ class ServiceConsoleActivity : AppCompatActivity() {
             R.string.console_stay_awake_state,
             if (isStayAwakeOn()) getString(R.string.state_on) else getString(R.string.state_off)
         )
+        binding.textStats.text = getString(R.string.console_stats, RequestStats.snapshot())
     }
 
     private fun isStayAwakeOn(): Boolean {
@@ -323,6 +329,48 @@ class ServiceConsoleActivity : AppCompatActivity() {
         ).show()
     }
 
+    private fun exportConfig() {
+        val json = ConfigBackup.toJson(this)
+        val dir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: filesDir
+        val file = File(dir, "mnnkeep_config.json")
+        try {
+            file.writeText(json)
+            val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
+            val send = Intent(Intent.ACTION_SEND).apply {
+                type = "application/json"
+                putExtra(Intent.EXTRA_STREAM, uri)
+                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            }
+            startActivity(Intent.createChooser(send, getString(R.string.config_import_hint)))
+        } catch (e: Exception) {
+            Toast.makeText(this, e.message ?: "export failed", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    private fun importConfig() {
+        val intent = Intent(Intent.ACTION_GET_CONTENT).apply { type = "application/json" }
+        startActivityForResult(
+            Intent.createChooser(intent, getString(R.string.config_import_hint)),
+            REQ_IMPORT_CONFIG
+        )
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (requestCode != REQ_IMPORT_CONFIG || resultCode != RESULT_OK || data?.data == null) return
+        val json = try {
+            contentResolver.openInputStream(data.data!!)?.bufferedReader()?.use { it.readText() }
+        } catch (e: Exception) { null }
+        val ok = json != null && ConfigBackup.fromJson(this, json)
+        Toast.makeText(
+            this,
+            if (ok) R.string.config_imported else R.string.config_import_failed,
+            Toast.LENGTH_LONG
+        ).show()
+        refresh()
+    }
+
     private fun copyToClipboard(text: String) {
         val cm = getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
         cm.setPrimaryClip(ClipData.newPlainText("api_key", text))
@@ -343,5 +391,9 @@ class ServiceConsoleActivity : AppCompatActivity() {
         } catch (e: Exception) {
             "0.0.0.0"
         }
+    }
+
+    companion object {
+        private const val REQ_IMPORT_CONFIG = 4001
     }
 }
