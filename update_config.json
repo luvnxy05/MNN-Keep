@@ -1,0 +1,6 @@
+{
+  "latest_version": "0.1.0",
+  "update_message": "MNN Keep v0.1.0 initial release: turn an old Android phone into an unattended on-device LLM inference server.",
+  "update_message_zh": "MNN Keep v0.1.0 首发：把旧安卓手机变成无人值守的本地大模型推理服务器。",
+  "download_url": "https://gitee.com/MikeDev/MNN-Keep/raw/main/release/MNN-Keep-v0.1.0.apk"
+}
