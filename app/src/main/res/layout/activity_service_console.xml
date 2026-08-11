@@ -204,6 +204,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/console_api_console" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_stay_awake"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/console_stay_awake" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

@@ -5,8 +5,10 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.app.ActivityManager
+import android.os.BatteryManager
 import android.graphics.Color
 import android.os.Bundle
+import android.provider.Settings
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -71,6 +73,7 @@ class ServiceConsoleActivity : AppCompatActivity() {
         binding.buttonApiConsole.setOnClickListener {
             ApiConsoleBottomSheetFragment().show(supportFragmentManager, "ApiConsoleBottomSheetFragment")
         }
+        binding.buttonStayAwake.setOnClickListener { toggleStayAwake() }
         binding.layoutModelRow.setOnClickListener { showModelPicker() }
         binding.buttonSwitchModel.setOnClickListener { showModelPicker() }
         binding.buttonCopyKey.setOnClickListener {
@@ -255,6 +258,16 @@ class ServiceConsoleActivity : AppCompatActivity() {
         binding.textApiKey.text =
             if (ApiServerConfig.isAuthEnabled(this)) ApiServerConfig.getApiKey(this)
             else getString(R.string.console_auth_disabled)
+        binding.buttonStayAwake.text = getString(
+            R.string.console_stay_awake_state,
+            if (isStayAwakeOn()) getString(R.string.state_on) else getString(R.string.state_off)
+        )
+    }
+
+    private fun isStayAwakeOn(): Boolean {
+        return Settings.Global.getInt(
+            contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0
+        ) != 0
     }
 
     /** Device RAM with a model-size recommendation. */
@@ -269,6 +282,45 @@ class ServiceConsoleActivity : AppCompatActivity() {
             else -> "∞"
         }
         return getString(R.string.console_ram_hint, String.format("%.1fGB", gb), limit)
+    }
+
+    /**
+     * Stay-awake-while-charging (developer option STAY_ON_WHILE_PLUGGED_IN).
+     * Prevents the screen from sleeping during unattended charging, which some
+     * ROMs use to enter deep doze that kills background services.
+     */
+    private fun toggleStayAwake() {
+        if (!Settings.System.canWrite(this)) {
+            AlertDialog.Builder(this)
+                .setTitle(R.string.console_stay_awake)
+                .setMessage(R.string.stay_awake_need_permission)
+                .setPositiveButton(R.string.stay_awake_grant) { _, _ ->
+                    try {
+                        startActivity(
+                            Intent(Settings.ACTION_MANAGE_WRITE_SETTINGS)
+                                .setData(android.net.Uri.parse("package:$packageName"))
+                        )
+                    } catch (_: Exception) { }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+            return
+        }
+        val plugMask = BatteryManager.BATTERY_PLUGGED_AC or
+            BatteryManager.BATTERY_PLUGGED_USB or
+            BatteryManager.BATTERY_PLUGGED_WIRELESS
+        val current = Settings.Global.getInt(
+            contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0
+        )
+        val newVal = if (current != 0) 0 else plugMask
+        Settings.Global.putInt(
+            contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, newVal
+        )
+        Toast.makeText(
+            this,
+            if (newVal != 0) R.string.stay_awake_on else R.string.stay_awake_off,
+            Toast.LENGTH_LONG
+        ).show()
     }
 
     private fun copyToClipboard(text: String) {
