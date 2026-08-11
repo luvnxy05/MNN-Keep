@@ -46,7 +46,7 @@ openai_conversation:
 - **Lock screen (FBE) — the #1 trap**: a PIN/pattern/password lock leaves the credential-encrypted storage **locked after reboot**, so boot auto-start and crash self-healing silently fail (`Activity does not exist`). Use **swipe lock or no lock** on the appliance, or accept a manual unlock after every power loss.
 - **Vendor whitelists** (HyperOS / HarmonyOS / MagicOS / ColorOS): allow auto-start, associated-start and background activity in the app-startup manager; disable battery optimization.
 - **ADB hardening**: `adb shell dumpsys deviceidle whitelist +io.mnnkeep.app`
-- **Physical fallback**: smart plug + charge-to-power-on = a hardware watchdog.
+
 - **Manual model folders** must be flat (`llm.mnn`/`config.json` directly in the model dir). HF-cache layout (`models--X--Y/snapshots/...`) fails with `MODEL_CONFIG_NOT_FOUND` — use the in-app market instead.
 
 ## Building
@@ -67,7 +67,7 @@ Apache 2.0 fork of MNN-Chat. Notable changes: keep-alive stack (START_STICKY / c
 
 - Mali (Kirin) GPUs are unreliable for LLM decode — CPU-only on Kirin devices
 - Vendor ROMs differ wildly on background policy; follow the deployment guide
-- 2GB-RAM devices should stay below 2B-parameter models
+- Choose models based on your device's performance and RAM; 2GB-RAM devices should stay below 2B-parameter models
 
 ## License
 
