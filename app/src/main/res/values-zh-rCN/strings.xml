@@ -671,6 +671,7 @@
     <string name="console_no_model_hint">请先在模型市场中下载模型</string>
     <string name="console_model_missing_hint">模型文件缺失，请重新下载该模型</string>
     <string name="console_model_missing">%1$s（文件缺失）</string>
+    <string name="console_model_hotswapped">模型已切换（服务保持运行）</string>
     <string name="console_service_not_started">服务未启动</string>
     <string name="console_address_local_only">http://127.0.0.1:%1$d（仅本机——如需局域网访问请在 API 设置中选择"监听所有"）</string>
     <string name="console_auth_disabled">认证已关闭</string>

@@ -683,7 +683,8 @@
     <string name="console_no_model">No model loaded</string>
     <string name="console_no_model_hint">Please download a model from the model market first</string>
     <string name="console_model_missing_hint">Model files are missing, please re-download the model</string>
-    <string name="console_model_missing">%1$s (files missing)</string>
+    <string name="console_model_missing">%1$s (file missing)</string>
+    <string name="console_model_hotswapped">Model switched (server keeps running)</string>
     <string name="console_service_not_started">Service not started</string>
     <string name="console_address_local_only">http://127.0.0.1:%1$d (device only — enable "Listen all" in API settings for LAN access)</string>
     <string name="console_auth_disabled">Auth disabled</string>

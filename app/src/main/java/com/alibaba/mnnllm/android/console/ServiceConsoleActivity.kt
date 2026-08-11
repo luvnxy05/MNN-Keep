@@ -27,6 +27,7 @@ import com.alibaba.mnnllm.api.openai.manager.ApiServiceManager
 import com.alibaba.mnnllm.api.openai.manager.CurrentModelManager
 import com.alibaba.mnnllm.api.openai.manager.ServerEventManager
 import com.alibaba.mnnllm.api.openai.service.ApiServerConfig
+import com.alibaba.mnnllm.api.openai.service.OpenAIService
 import com.alibaba.mnnllm.api.openai.network.application.RequestStats
 import androidx.preference.PreferenceManager
 import com.alibaba.mnnllm.android.utils.CrashUtil
@@ -147,8 +148,15 @@ class ServiceConsoleActivity : AppCompatActivity() {
             .setItems(names.toTypedArray()) { _, which ->
                 val modelId = models[which]
                 CurrentModelManager.setCurrentModelId(modelId)
+                // Hot-swap while the server is running: coordinator's startServer
+                // swaps the runtime session in place (no stop/start cycle).
+                if (ServerEventManager.getInstance().isServerRunning()) {
+                    OpenAIService.startService(this, modelId)
+                    Toast.makeText(this, R.string.console_model_hotswapped, Toast.LENGTH_SHORT).show()
+                } else {
+                    Toast.makeText(this, R.string.console_model_selected, Toast.LENGTH_SHORT).show()
+                }
                 refresh()
-                Toast.makeText(this, R.string.console_model_selected, Toast.LENGTH_SHORT).show()
             }
             .setNeutralButton(R.string.console_clear_model) { _, _ ->
                 CurrentModelManager.clearCurrentModelId()
