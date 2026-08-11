@@ -703,6 +703,8 @@
     <string name="console_crash_logs">Crash logs</string>
     <string name="console_no_crash_logs">No crash logs yet</string>
     <string name="console_keepalive_settings">Keep-alive setup</string>
+    <string name="console_api_console">API console (request logs)</string>
+    <string name="console_ram_hint">RAM %1$s — models up to %2$s recommended</string>
     <string name="keepalive_guide_title">Keep-alive setup (%1$s)</string>
     <string name="keepalive_open_app_settings">Open app settings</string>
     <string name="keepalive_battery_optimization">Battery optimization</string>

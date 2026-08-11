@@ -4,6 +4,7 @@ import android.content.ClipData
 import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
+import android.app.ActivityManager
 import android.graphics.Color
 import android.os.Bundle
 import android.widget.Toast
@@ -17,6 +18,7 @@ import com.alibaba.mnnllm.android.databinding.ActivityServiceConsoleBinding
 import com.alibaba.mnnllm.android.main.MainActivity
 import com.alibaba.mls.api.download.ModelDownloadManager
 import com.alibaba.mnnllm.api.openai.ui.ApiSettingsBottomSheetFragment
+import com.alibaba.mnnllm.api.openai.ui.ApiConsoleBottomSheetFragment
 import com.alibaba.mnnllm.api.openai.manager.ApiServiceManager
 import com.alibaba.mnnllm.api.openai.manager.CurrentModelManager
 import com.alibaba.mnnllm.api.openai.manager.ServerEventManager
@@ -66,6 +68,9 @@ class ServiceConsoleActivity : AppCompatActivity() {
         }
         binding.buttonCrashLogs.setOnClickListener { showCrashLogs() }
         binding.buttonKeepAlive.setOnClickListener { KeepAliveGuide.show(this) }
+        binding.buttonApiConsole.setOnClickListener {
+            ApiConsoleBottomSheetFragment().show(supportFragmentManager, "ApiConsoleBottomSheetFragment")
+        }
         binding.layoutModelRow.setOnClickListener { showModelPicker() }
         binding.buttonSwitchModel.setOnClickListener { showModelPicker() }
         binding.buttonCopyKey.setOnClickListener {
@@ -233,6 +238,7 @@ class ServiceConsoleActivity : AppCompatActivity() {
         }
         binding.switchService.setOnCheckedChangeListener(serviceSwitchListener)
         binding.textModelName.text = modelId ?: getString(R.string.console_no_model)
+        binding.textDeviceRam.text = ramHint()
         if (modelId != null &&
             ModelDownloadManager.getInstance(this).getDownloadedFile(modelId) == null
         ) {
@@ -249,6 +255,20 @@ class ServiceConsoleActivity : AppCompatActivity() {
         binding.textApiKey.text =
             if (ApiServerConfig.isAuthEnabled(this)) ApiServerConfig.getApiKey(this)
             else getString(R.string.console_auth_disabled)
+    }
+
+    /** Device RAM with a model-size recommendation. */
+    private fun ramHint(): String {
+        val mi = ActivityManager.MemoryInfo()
+        (getSystemService(ACTIVITY_SERVICE) as ActivityManager).getMemoryInfo(mi)
+        val gb = mi.totalMem / 1024.0 / 1024.0 / 1024.0
+        val limit = when {
+            gb < 2.0 -> "1B"
+            gb < 4.0 -> "2B"
+            gb < 8.0 -> "3B"
+            else -> "∞"
+        }
+        return getString(R.string.console_ram_hint, String.format("%.1fGB", gb), limit)
     }
 
     private fun copyToClipboard(text: String) {

@@ -73,6 +73,15 @@
                     android:text="@string/console_no_model" />
 
                 <TextView
+                    android:id="@+id/text_device_ram"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textColor="#888888"
+                    android:textSize="12sp"
+                    android:gravity="end" />
+
+                <TextView
                     android:id="@+id/button_switch_model"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
@@ -188,6 +197,13 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="@string/console_keepalive_settings" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/button_api_console"
+                style="@style/Widget.Material3.Button.OutlinedButton"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/console_api_console" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

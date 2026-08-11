@@ -8,24 +8,46 @@ import io.ktor.http.ContentType
 import io.ktor.server.application.Application
 import io.ktor.server.application.call
 import io.ktor.server.application.install
+import io.ktor.server.application.ApplicationCallPipeline
 import io.ktor.server.auth.authenticate
-import io.ktor.server.plugins.calllogging.CallLogging
 import io.ktor.server.request.httpMethod
 import io.ktor.server.request.path
 import io.ktor.server.request.uri
+import io.ktor.server.plugins.origin
 import io.ktor.server.response.respondText
 import io.ktor.server.routing.get
 import io.ktor.server.routing.routing
 import io.ktor.server.sse.SSE
 import io.ktor.server.sse.sse
 import io.ktor.sse.ServerSentEvent
-import org.slf4j.event.Level
 import java.io.InputStream
+import io.ktor.util.pipeline.intercept
+import timber.log.Timber
 
 fun Application.configureRouting() {
     install(SSE)
 
     routing {
+        // Request log for the API console (LogCollector picks up
+        // "RequestProcessing" tag): method path -> status duration [client-ip].
+        intercept(ApplicationCallPipeline.Call) {
+            val start = System.currentTimeMillis()
+            try {
+                proceed()
+            } finally {
+                val path = call.request.path()
+                if (path.startsWith("/v1/")) {
+                    Timber.tag("RequestProcessing").i(
+                        "HTTP %s %s -> %s %dms [%s]",
+                        call.request.httpMethod.value,
+                        path,
+                        call.response.status(),
+                        System.currentTimeMillis() - start,
+                        call.request.origin.remoteHost
+                    )
+                }
+            }
+        }
         get("/") {
             try {
                 val htmlContent = loadHtmlFromAssets()
@@ -50,20 +72,6 @@ fun Application.configureRouting() {
         }
     }
 
-    install(CallLogging) {
-        level = Level.INFO
-        filter { call ->
-            val path = call.request.path()
-            path.startsWith("/v1/chat/completions") || path.startsWith("/v1/messages")
-        }
-        format { call ->
-            val status = call.response.status()
-            val method = call.request.httpMethod.value
-            val uri = call.request.uri
-            val userAgent = call.request.headers["User-Agent"] ?: "Unknown"
-            "$status: $method $uri - User-Agent: $userAgent"
-        }
-    }
 }
 
 private fun loadHtmlFromAssets(): String {

@@ -690,6 +690,8 @@
     <string name="console_crash_logs">崩溃日志</string>
     <string name="console_no_crash_logs">暂无崩溃日志</string>
     <string name="console_keepalive_settings">保活设置</string>
+    <string name="console_api_console">API 控制台（请求日志）</string>
+    <string name="console_ram_hint">设备内存 %1$s — 建议模型 ≤ %2$s</string>
     <string name="keepalive_guide_title">保活设置（%1$s）</string>
     <string name="keepalive_open_app_settings">打开应用详情</string>
     <string name="keepalive_battery_optimization">电池优化</string>
