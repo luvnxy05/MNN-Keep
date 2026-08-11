@@ -49,7 +49,13 @@ import kotlin.math.max
 
 class UpdateChecker(private val context: Context) {
 
-    private var manifestUrl = "https://modelscope.cn/datasets/MNN/mnn_llm_app_config/resolve/master/main_config.json"
+    // MNN Keep update manifest. Gitee first (fast in mainland China),
+    // GitHub raw as fallback. Points at our own repos, not upstream MNN.
+    private val manifestUrls = listOf(
+        "https://gitee.com/MikeDev/MNN-Keep/raw/main/update_config.json",
+        "https://raw.githubusercontent.com/luvnxy05/MNN-Keep/main/update_config.json"
+    )
+    private var manifestUrlIndex = 0
     private var progressDialog: Dialog? = null
     
     private fun createMaterial3ProgressDialog(context: Context, message: String): Dialog {
@@ -72,12 +78,6 @@ class UpdateChecker(private val context: Context) {
         dialog.show()
         
         return dialog
-    }
-
-    init {
-        if (File("/data/local/tmp/mnn_chat_test").exists()) {
-            manifestUrl = manifestUrl.replace("/MNN/", "/JuudeS/")
-        }
     }
 
     @SuppressLint("LogNotTimber")
@@ -116,6 +116,7 @@ class UpdateChecker(private val context: Context) {
             .writeTimeout(30, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
+        val manifestUrl = manifestUrls[manifestUrlIndex]
         Log.d(TAG, "checkForUpdates: $manifestUrl")
         val request: Request = Builder()
             .url(manifestUrl)
@@ -127,8 +128,14 @@ class UpdateChecker(private val context: Context) {
                 Log.e(TAG, "Request URL: ${call.request().url}")
                 Log.e(TAG, "Exception type: ${e.javaClass.simpleName}")
                 Log.e(TAG, "Exception message: ${e.message}")
-                
-                if (forceCheck) {
+
+                // Try the next manifest source (Gitee -> GitHub), then give up.
+                // Must hop back to the main thread: checkForUpdates builds a
+                // Dialog (LayoutInflater) which is main-thread only.
+                if (manifestUrlIndex < manifestUrls.size - 1) {
+                    manifestUrlIndex++
+                    Handler(Looper.getMainLooper()).post { checkForUpdates(context, forceCheck) }
+                } else if (forceCheck) {
                     progressDialog?.dismiss()
                     UiUtils.showToast(
                         context,

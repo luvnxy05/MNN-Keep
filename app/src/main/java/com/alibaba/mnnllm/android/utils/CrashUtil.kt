@@ -139,4 +139,9 @@ object CrashUtil : Thread.UncaughtExceptionHandler {
     fun hasCrash(): Boolean {
         return crashDir.listFiles()?.isNotEmpty() ?: false
     }
+
+    /** Crash log files, newest first — for the on-device diagnostics UI. */
+    fun getCrashLogFiles(): List<File> {
+        return crashDir.listFiles()?.sortedByDescending { it.lastModified() } ?: emptyList()
+    }
 }

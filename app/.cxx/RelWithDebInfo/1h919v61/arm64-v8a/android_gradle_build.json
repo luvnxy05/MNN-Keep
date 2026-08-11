@@ -1,0 +1,40 @@
+{
+  "buildFiles": [
+    "/Users/mike/Projects/mnn-fork/apps/Android/MnnLlmChat/app/src/main/cpp/CMakeLists.txt"
+  ],
+  "cleanCommandsComponents": [
+    [
+      "/Users/mike/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+      "-C",
+      "/Users/mike/Projects/mnn-fork/apps/Android/MnnLlmChat/app/.cxx/RelWithDebInfo/1h919v61/arm64-v8a",
+      "clean"
+    ]
+  ],
+  "buildTargetsCommandComponents": [
+    "/Users/mike/Library/Android/sdk/cmake/3.22.1/bin/ninja",
+    "-C",
+    "/Users/mike/Projects/mnn-fork/apps/Android/MnnLlmChat/app/.cxx/RelWithDebInfo/1h919v61/arm64-v8a",
+    "{LIST_OF_TARGETS_TO_BUILD}"
+  ],
+  "libraries": {
+    "mnnllmapp::@6890427a1f51a3e7e1df": {
+      "toolchain": "toolchain",
+      "abi": "arm64-v8a",
+      "artifactName": "mnnllmapp",
+      "output": "/Users/mike/Projects/mnn-fork/apps/Android/MnnLlmChat/app/build/intermediates/cxx/RelWithDebInfo/1h919v61/obj/arm64-v8a/libmnnllmapp.so",
+      "runtimeFiles": [
+        "/Users/mike/Projects/mnn-fork/project/android/build_64/lib/libMNN.so"
+      ]
+    }
+  },
+  "toolchains": {
+    "toolchain": {
+      "cCompilerExecutable": "/Users/mike/Library/Android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang.lld",
+      "cppCompilerExecutable": "/Users/mike/Library/Android/sdk/ndk/27.2.12479018/toolchains/llvm/prebuilt/darwin-x86_64/bin/clang++.lld"
+    }
+  },
+  "cFileExtensions": [],
+  "cppFileExtensions": [
+    "cpp"
+  ]
+}

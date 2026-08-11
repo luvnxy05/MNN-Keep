@@ -698,6 +698,13 @@
     <string name="console_enter_chat">Open chat</string>
     <string name="console_manage_models">Manage models</string>
     <string name="console_api_settings">API settings</string>
+    <string name="console_crash_logs">Crash logs</string>
+    <string name="console_no_crash_logs">No crash logs yet</string>
+    <string name="console_keepalive_settings">Keep-alive setup</string>
+    <string name="keepalive_guide_title">Keep-alive setup (%1$s)</string>
+    <string name="keepalive_open_app_settings">Open app settings</string>
+    <string name="keepalive_battery_optimization">Battery optimization</string>
+    <string name="keepalive_adb_hint">\nADB (optional, most reliable):\n  adb shell dumpsys deviceidle whitelist +io.mnnkeep.app\n\nIf the device has a PIN/pattern lock, boot auto-start will NOT work after reboot (FBE) — use swipe lock or none.</string>
     <string name="console_keepalive_hint">Crash auto-restart enabled. Boot auto-start requires allowing this app in system settings.</string>
     <string name="api_key_copied">API Key copied</string>
 </resources>

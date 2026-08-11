@@ -22,9 +22,12 @@ import com.alibaba.mnnllm.api.openai.manager.CurrentModelManager
 import com.alibaba.mnnllm.api.openai.manager.ServerEventManager
 import com.alibaba.mnnllm.api.openai.service.ApiServerConfig
 import androidx.preference.PreferenceManager
+import com.alibaba.mnnllm.android.utils.CrashUtil
 import kotlinx.coroutines.launch
 import java.io.File
+import java.text.SimpleDateFormat
 import java.net.NetworkInterface
+import java.util.Date
 import java.util.Collections
 
 /**
@@ -61,6 +64,8 @@ class ServiceConsoleActivity : AppCompatActivity() {
             // Original detailed API settings (port / IP / API key / CORS).
             ApiSettingsBottomSheetFragment().show(supportFragmentManager, "ApiSettingsBottomSheetFragment")
         }
+        binding.buttonCrashLogs.setOnClickListener { showCrashLogs() }
+        binding.buttonKeepAlive.setOnClickListener { KeepAliveGuide.show(this) }
         binding.layoutModelRow.setOnClickListener { showModelPicker() }
         binding.buttonSwitchModel.setOnClickListener { showModelPicker() }
         binding.buttonCopyKey.setOnClickListener {
@@ -139,6 +144,27 @@ class ServiceConsoleActivity : AppCompatActivity() {
                 // Manual full rescan (DB + filesystem), dedup by display name.
                 showModelPickerDialog(collectInstalledModels())
             }
+            .show()
+    }
+
+    private fun showCrashLogs() {
+        val files = CrashUtil.getCrashLogFiles()
+        if (files.isEmpty()) {
+            Toast.makeText(this, R.string.console_no_crash_logs, Toast.LENGTH_SHORT).show()
+            return
+        }
+        val fmt = SimpleDateFormat("MM-dd HH:mm", java.util.Locale.getDefault())
+        val names = files.map { "${it.name}  ${fmt.format(Date(it.lastModified()))}" }
+        AlertDialog.Builder(this)
+            .setTitle(R.string.console_crash_logs)
+            .setItems(names.toTypedArray()) { _, which ->
+                AlertDialog.Builder(this)
+                    .setTitle(files[which].name)
+                    .setMessage(files[which].readText().take(3000))
+                    .setPositiveButton(android.R.string.ok, null)
+                    .show()
+            }
+            .setNegativeButton(android.R.string.cancel, null)
             .show()
     }
 

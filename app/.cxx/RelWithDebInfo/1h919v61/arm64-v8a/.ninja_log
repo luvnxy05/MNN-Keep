@@ -1,0 +1,15 @@
+# ninja log v5
+1	810	1786420820192676564	CMakeFiles/mnnllmapp.dir/mnn_wrapper_jni.cpp.o	91bf8b1ecf98e1ff
+3	898	1786420820283057834	CMakeFiles/mnnllmapp.dir/crash_util.cpp.o	cc7096a22ce85477
+1	1148	1786420820534159208	CMakeFiles/mnnllmapp.dir/video/image_utils.cpp.o	9eecf8768e97bb7f
+5	1463	1786420820848085509	CMakeFiles/mnnllmapp.dir/diffusion_session.cpp.o	554e9f6f4c8272da
+8	1475	1786420820859548163	CMakeFiles/mnnllmapp.dir/video/byte_buffer_decoder.cpp.o	60bb3c63ab52f3e0
+7	2292	1786420821675847296	CMakeFiles/mnnllmapp.dir/video/video_decoder.cpp.o	3de1c7583f122acc
+7	2825	1786420822187017493	CMakeFiles/mnnllmapp.dir/sana_session.cpp.o	608b7030dea0a43f
+816	2914	1786420822297102407	CMakeFiles/mnnllmapp.dir/video/video_processor.cpp.o	4d6d57f2568dab08
+4	4482	1786420823862748960	CMakeFiles/mnnllmapp.dir/diffusion_jni.cpp.o	6b3cbf44fe73cba1
+6	4690	1786420824070223719	CMakeFiles/mnnllmapp.dir/sana_jni.cpp.o	d79fcc9faa4129f9
+3	5067	1786420824425433681	CMakeFiles/mnnllmapp.dir/processor.cpp.o	5343e66790bf6ac9
+1	5163	1786420824541654629	CMakeFiles/mnnllmapp.dir/llm_mnn_jni.cpp.o	2c309ee783756f06
+2	5914	1786420825290429216	CMakeFiles/mnnllmapp.dir/llm_session.cpp.o	5b6b811baeec61dc
+5914	5973	1786420825350802229	/Users/mike/Projects/mnn-fork/apps/Android/MnnLlmChat/app/build/intermediates/cxx/RelWithDebInfo/1h919v61/obj/arm64-v8a/libmnnllmapp.so	2e83f85fed3e19aa
