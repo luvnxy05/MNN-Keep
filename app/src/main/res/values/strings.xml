@@ -103,7 +103,9 @@
     <string name="reloading_session">Reloading chat session</string>
     <string name="wait_install_apk">please wait for download complete and install</string>
     <string name="check_for_update">Check for update</string>
-    <string name="get_update_info_failed">get update info failed</string>
+    <string name="get_update_info_failed">Cannot reach the update server (Gitee/GitHub). Please check your network and try again.</string>
+    <string name="update_check_title">Check for updates</string>
+    <string name="no_update_dialog">You are up to date (v%1$s).</string>
     <string name="no_update">No update available</string>
     <string name="download">Download</string>
     <string name="download_pending">Pending</string>

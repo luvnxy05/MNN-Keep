@@ -56,7 +56,16 @@ class UpdateChecker(private val context: Context) {
         "https://raw.githubusercontent.com/luvnxy05/MNN-Keep/main/update_config.json"
     )
     private var manifestUrlIndex = 0
+    private var checkStartTime = 0L
     private var progressDialog: Dialog? = null
+
+    // Hard 10s cap: OkHttp connectTimeout does NOT cover DNS resolution, which
+    // can block for 30s+ on flaky networks — that used to leave the spinner up
+    // for minutes. This runnable force-finishes the check.
+    private val timeoutRunnable = Runnable {
+        Log.d(TAG, "Update check timed out after 10s")
+        failCheck(context)
+    }
     
     private fun createMaterial3ProgressDialog(context: Context, message: String): Dialog {
         // Create a custom layout for the progress dialog
@@ -86,6 +95,11 @@ class UpdateChecker(private val context: Context) {
         if (BuildConfig.IS_GOOGLE_PLAY_BUILD) {
             return
         }
+
+        // Overall 10s budget across both manifest sources; reset on first call.
+        if (manifestUrlIndex == 0) {
+            checkStartTime = System.currentTimeMillis()
+        }
         
         if (waitingForInstallPermission && (waitingDownloadId > 0 || waitingFileUri != null)) {
             installApk(context, waitingDownloadId, waitingFileUri)
@@ -98,8 +112,9 @@ class UpdateChecker(private val context: Context) {
                 return
             }
         }
-        if (forceCheck) {
+        if (forceCheck && progressDialog == null) {
             progressDialog = createMaterial3ProgressDialog(context, context.getString(R.string.checking_repo_updates))
+            Handler(Looper.getMainLooper()).postDelayed(timeoutRunnable, 10_000)
         }
         val loggingInterceptor = Interceptor { chain ->
             val request: Request = chain.request()
@@ -111,9 +126,9 @@ class UpdateChecker(private val context: Context) {
             response
         }
         val client = OkHttpClient.Builder()
-            .connectTimeout(10, TimeUnit.SECONDS)
-            .readTimeout(30, TimeUnit.SECONDS)
-            .writeTimeout(30, TimeUnit.SECONDS)
+            .connectTimeout(5, TimeUnit.SECONDS)
+            .readTimeout(5, TimeUnit.SECONDS)
+            .writeTimeout(5, TimeUnit.SECONDS)
             .addInterceptor(loggingInterceptor)
             .build()
         val manifestUrl = manifestUrls[manifestUrlIndex]
@@ -129,19 +144,17 @@ class UpdateChecker(private val context: Context) {
                 Log.e(TAG, "Exception type: ${e.javaClass.simpleName}")
                 Log.e(TAG, "Exception message: ${e.message}")
 
-                // Try the next manifest source (Gitee -> GitHub), then give up.
+                // Try the next source only if still within the 10s budget.
                 // Must hop back to the main thread: checkForUpdates builds a
                 // Dialog (LayoutInflater) which is main-thread only.
-                if (manifestUrlIndex < manifestUrls.size - 1) {
+                val elapsed = System.currentTimeMillis() - checkStartTime
+                if (manifestUrlIndex < manifestUrls.size - 1 && elapsed < 10_000) {
                     manifestUrlIndex++
                     Handler(Looper.getMainLooper()).post { checkForUpdates(context, forceCheck) }
-                } else if (forceCheck) {
-                    progressDialog?.dismiss()
-                    UiUtils.showToast(
-                        context,
-                        context.getString(R.string.get_update_info_failed),
-                        Toast.LENGTH_SHORT
-                    )
+                } else {
+                    if (forceCheck) {
+                        Handler(Looper.getMainLooper()).post { failCheck(context) }
+                    }
                 }
             }
 
@@ -154,12 +167,7 @@ class UpdateChecker(private val context: Context) {
                     Log.e(TAG, "HTTP error: ${response.code} - ${response.message}")
                     Log.e(TAG, "Response body: ${response.body?.string()}")
                     if (forceCheck) {
-                        progressDialog?.dismiss()
-                        UiUtils.showToast(
-                            context,
-                            context.getString(R.string.get_update_info_failed),
-                            Toast.LENGTH_SHORT
-                        )
+                        failCheck(context)
                     }
                     return
                 }
@@ -177,9 +185,12 @@ class UpdateChecker(private val context: Context) {
                         TAG,
                         "currentVersion : $currentVersion"
                     )
-                    progressDialog?.dismiss()
-                    if (isNewerVersion(latestVersion, currentVersion)) {
-                        Handler(Looper.getMainLooper()).post {
+                    // All UI work must happen on the main thread.
+                    Handler(Looper.getMainLooper()).post {
+                        progressDialog?.dismiss()
+                        progressDialog = null
+                        Handler(Looper.getMainLooper()).removeCallbacks(timeoutRunnable)
+                        if (isNewerVersion(latestVersion, currentVersion)) {
                             showUpdateDialog(
                                 context,
                                 latestVersion,
@@ -187,19 +198,32 @@ class UpdateChecker(private val context: Context) {
                                 updateMessageZh,
                                 downloadUrl
                             )
+                        } else if (forceCheck) {
+                            MaterialAlertDialogBuilder(context)
+                                .setTitle(R.string.update_check_title)
+                                .setMessage(context.getString(R.string.no_update_dialog, currentVersion))
+                                .setPositiveButton(android.R.string.ok, null)
+                                .show()
                         }
-                    } else if (forceCheck) {
-                        UiUtils.showToast(
-                            context,
-                            context.getString(R.string.no_update),
-                            Toast.LENGTH_SHORT
-                        )
                     }
                 } catch (e: JSONException) {
                     Log.e(TAG, "check version error", e)
                 }
             }
         })
+    }
+
+    /** Give up after all sources failed / budget exhausted; show a dialog. */
+    private fun failCheck(context: Context) {
+        manifestUrlIndex = 0
+        progressDialog?.dismiss()
+        progressDialog = null
+        Handler(Looper.getMainLooper()).removeCallbacks(timeoutRunnable)
+        MaterialAlertDialogBuilder(context)
+            .setTitle(R.string.update_check_title)
+            .setMessage(R.string.get_update_info_failed)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun isNewerVersion(latest: String, current: String): Boolean {

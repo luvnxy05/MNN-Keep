@@ -93,6 +93,8 @@
     <string name="wait_install_apk">请等待下载完成后安装</string>
     <string name="check_for_update">检查更新</string>
     <string name="get_update_info_failed">获取更新信息失败</string>
+    <string name="update_check_title">检查更新</string>
+    <string name="no_update_dialog">当前已是最新版本（v%1$s）。</string>
     <string name="no_update">没有可用更新</string>
     <string name="download">下载</string>
     <string name="download_pending">等待中</string>
