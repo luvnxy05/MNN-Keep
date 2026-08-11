@@ -60,9 +60,6 @@ openai_conversation:
 adb shell dumpsys deviceidle whitelist +io.mnnkeep.app   # 电池白名单
 ```
 
-### 4. 物理兜底
-智能插座 + 手机「充电自动开机」= 硬件级 watchdog：服务心跳超时 → 断电重启。
-
 ### 5. 手动放置模型
 拷贝模型目录到 `/data/data/io.mnnkeep.app/files/.mnnmodels/modelscope/` 时**必须 flat 结构**（`llm.mnn`/`config.json` 直接在该目录下）。HF 缓存结构（`models--X--Y/snapshots/...`）无法被服务加载（`MODEL_CONFIG_NOT_FOUND`），请用 App 内模型市场下载。
 
@@ -102,7 +99,7 @@ export ANDROID_NDK=$HOME/Library/Android/sdk/ndk/27.0.12077973
 
 - 麒麟 Mali GPU 跑 LLM decode 不可靠（OpenCL 动态 shape 问题），Kirin 设备 CPU-only
 - 各厂商 ROM 保活行为差异大，参考上文部署指南逐项授权
-- 官方仅保证高配机型体验；2GB 以下内存设备不建议跑 2B+ 模型
+- 请根据设备性能、内存大小酌情选择推理模型，2GB 以下内存设备不建议跑 2B+ 模型
 
 ## License
 
