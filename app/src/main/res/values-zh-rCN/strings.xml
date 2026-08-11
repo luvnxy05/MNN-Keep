@@ -693,6 +693,9 @@
     <string name="console_api_console">API 控制台（请求日志）</string>
     <string name="console_ram_hint">设备内存 %1$s — 建议模型 ≤ %2$s</string>
     <string name="console_stats">请求统计：%1$s</string>
+    <string name="console_uptime">已运行：%1$s</string>
+    <string name="console_uptime_stopped">服务未运行</string>
+    <string name="console_model_load"> · 模型加载 %1$ss</string>
     <string name="console_stay_awake">充电常亮</string>
     <string name="console_stay_awake_state">充电常亮：%1$s</string>
     <string name="state_on">已开启</string>
@@ -707,10 +710,12 @@
     <string name="stay_awake_off">充电常亮已关闭。</string>
     <string name="stay_awake_need_permission">充电常亮需要「修改系统设置」权限。点击「去授权」并在系统设置中开启即可。</string>
     <string name="stay_awake_grant">去授权</string>
+    <string name="stay_awake_secure_required">Android 15+ 该开关需要系统级权限，请手动开启：\n\nadb shell settings put global stay_on_while_plugged_in 7\n\n或进入开发者选项，打开「充电时屏幕不休眠」。</string>
+    <string name="stay_awake_open_dev_options">打开开发者选项</string>
     <string name="keepalive_guide_title">保活设置（%1$s）</string>
     <string name="keepalive_open_app_settings">打开应用详情</string>
     <string name="keepalive_battery_optimization">电池优化</string>
-    <string name="keepalive_adb_hint">\nADB 加固（可选，最可靠）：\n  adb shell dumpsys deviceidle whitelist +io.mnnkeep.app\n\n若设备设置了 PIN/图案锁，重启后开机自启将失效（FBE 加密）——请改用滑动锁或无锁。</string>
+    <string name="keepalive_adb_hint">\nADB 加固（可选，最可靠）：\n  adb shell dumpsys deviceidle whitelist +io.mnnkeep.app\n  adb shell settings put global stay_on_while_plugged_in 7   # 充电常亮\n\n若设备设置了 PIN/图案锁，重启后开机自启将失效（FBE 加密）——请改用滑动锁或无锁。</string>
     <string name="console_keepalive_hint">崩溃自愈已开启；开机自启需在系统设置中允许本应用自启动</string>
     <string name="api_key_copied">API Key 已复制</string>
 </resources>

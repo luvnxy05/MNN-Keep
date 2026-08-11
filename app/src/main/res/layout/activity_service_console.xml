@@ -145,6 +145,14 @@
                 android:paddingTop="8dp"
                 android:textColor="#888888"
                 android:textSize="12sp" />
+
+            <TextView
+                android:id="@+id/text_uptime"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingTop="4dp"
+                android:textColor="#888888"
+                android:textSize="12sp" />
         </LinearLayout>
     </com.google.android.material.card.MaterialCardView>
 

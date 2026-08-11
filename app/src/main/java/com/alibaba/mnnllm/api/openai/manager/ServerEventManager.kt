@@ -36,7 +36,8 @@ class ServerEventManager {
         val host: String = "",
         val port: Int = 0,
         val isRunning: Boolean = false,
-        val startTime: Long = 0L
+        val startTime: Long = 0L,
+        val modelLoadMs: Long = 0L
     )
 
     /** * checkservicewhethercurrentlyrunning*/
@@ -52,6 +53,10 @@ class ServerEventManager {
     /** * getcurrentservicestate*/
     fun getCurrentState(): ServerState {
         return _serverState.value
+    }
+
+    fun setModelLoadMs(ms: Long) {
+        _serverInfo.value = _serverInfo.value.copy(modelLoadMs = ms)
     }
 
     /** * getcurrentserviceinfo*/

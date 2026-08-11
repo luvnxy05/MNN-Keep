@@ -14,6 +14,7 @@ import com.alibaba.mnnllm.android.chat.ChatActivity
 import com.alibaba.mnnllm.api.openai.di.ServiceLocator
 import com.alibaba.mnnllm.api.openai.manager.ApiNotificationManager
 import com.alibaba.mnnllm.api.openai.manager.CurrentModelManager
+import com.alibaba.mnnllm.api.openai.manager.ServerEventManager
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.SupervisorJob
@@ -139,7 +140,11 @@ class OpenAIService : Service() {
         // Run startServer off main thread to avoid ANR: ensureSession (llmSession.load) is heavy
         val startModelId = if (!requestedModelId.isNullOrBlank()) requestedModelId else currentModelId
         serviceScope.launch {
+            val loadStart = System.currentTimeMillis()
             val startSuccess = coordinator.startServer(startModelId)
+            if (startSuccess) {
+                ServerEventManager.getInstance().setModelLoadMs(System.currentTimeMillis() - loadStart)
+            }
             if (!startSuccess && !requestedModelId.isNullOrBlank()) {
                 if (previousModelId != null) {
                     currentModelId = previousModelId

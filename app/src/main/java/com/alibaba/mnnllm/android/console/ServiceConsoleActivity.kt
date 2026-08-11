@@ -30,6 +30,7 @@ import com.alibaba.mnnllm.api.openai.service.ApiServerConfig
 import com.alibaba.mnnllm.api.openai.network.application.RequestStats
 import androidx.preference.PreferenceManager
 import com.alibaba.mnnllm.android.utils.CrashUtil
+import timber.log.Timber
 import kotlinx.coroutines.launch
 import java.io.File
 import java.text.SimpleDateFormat
@@ -268,6 +269,21 @@ class ServiceConsoleActivity : AppCompatActivity() {
             if (isStayAwakeOn()) getString(R.string.state_on) else getString(R.string.state_off)
         )
         binding.textStats.text = getString(R.string.console_stats, RequestStats.snapshot())
+        binding.textUptime.text = uptimeText(running)
+    }
+
+    private fun uptimeText(running: Boolean): String {
+        val info = ServerEventManager.getInstance().getCurrentInfo()
+        if (!running || info.startTime <= 0) return getString(R.string.console_uptime_stopped)
+        val secs = (System.currentTimeMillis() - info.startTime) / 1000
+        val h = secs / 3600
+        val m = (secs % 3600) / 60
+        val s = secs % 60
+        val uptime = if (h > 0) "${h}h${m}m" else if (m > 0) "${m}m${s}s" else "${s}s"
+        val load = if (info.modelLoadMs > 0) {
+            getString(R.string.console_model_load, info.modelLoadMs / 1000.0)
+        } else ""
+        return getString(R.string.console_uptime, uptime) + load
     }
 
     private fun isStayAwakeOn(): Boolean {
@@ -297,6 +313,7 @@ class ServiceConsoleActivity : AppCompatActivity() {
      */
     private fun toggleStayAwake() {
         if (!Settings.System.canWrite(this)) {
+            Timber.tag("StayAwake").w("canWrite=false -> permission dialog")
             AlertDialog.Builder(this)
                 .setTitle(R.string.console_stay_awake)
                 .setMessage(R.string.stay_awake_need_permission)
@@ -315,18 +332,38 @@ class ServiceConsoleActivity : AppCompatActivity() {
         val plugMask = BatteryManager.BATTERY_PLUGGED_AC or
             BatteryManager.BATTERY_PLUGGED_USB or
             BatteryManager.BATTERY_PLUGGED_WIRELESS
-        val current = Settings.Global.getInt(
-            contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0
-        )
+        val current = try {
+            Settings.Global.getInt(
+                contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, 0
+            )
+        } catch (e: Exception) { 0 }
         val newVal = if (current != 0) 0 else plugMask
-        Settings.Global.putInt(
-            contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, newVal
-        )
-        Toast.makeText(
-            this,
-            if (newVal != 0) R.string.stay_awake_on else R.string.stay_awake_off,
-            Toast.LENGTH_LONG
-        ).show()
+        try {
+            Settings.Global.putInt(
+                contentResolver, Settings.Global.STAY_ON_WHILE_PLUGGED_IN, newVal
+            )
+            Timber.tag("StayAwake").i("current=$current -> new=$newVal")
+            Toast.makeText(
+                this,
+                if (newVal != 0) R.string.stay_awake_on else R.string.stay_awake_off,
+                Toast.LENGTH_LONG
+            ).show()
+        } catch (e: SecurityException) {
+            // Android 15+ moved STAY_ON_WHILE_PLUGGED_IN behind
+            // WRITE_SECURE_SETTINGS (system-app only). Fall back to guiding
+            // the user: adb command or the developer options toggle.
+            Timber.tag("StayAwake").w("WRITE_SECURE_SETTINGS required: ${e.message}")
+            AlertDialog.Builder(this)
+                .setTitle(R.string.console_stay_awake)
+                .setMessage(R.string.stay_awake_secure_required)
+                .setPositiveButton(R.string.stay_awake_open_dev_options) { _, _ ->
+                    try {
+                        startActivity(Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS))
+                    } catch (_: Exception) { }
+                }
+                .setNegativeButton(android.R.string.cancel, null)
+                .show()
+        }
     }
 
     private fun exportConfig() {
