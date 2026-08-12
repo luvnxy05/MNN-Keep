@@ -9,7 +9,9 @@ MNN Keep is a deep fork of [MNN-Chat](https://github.com/alibaba/MNN/tree/master
 ## Features
 
 - **OpenAI-compatible API**: `/v1/chat/completions`, `/v1/models`, Bearer auth, CORS, Anthropic-compatible endpoints — reachable from any device on your LAN
-- **Service console**: home screen shows service state, model, port, API key, one-tap start/stop; pick your model from download history + disk scan (manual refresh)
+- **Service console**: home screen shows service state, model, port, API key, one-tap start/stop; pick your model from download history + disk scan (manual refresh), **hot-swap models while the server keeps running**
+- **Ops panel**: request stats (count / success rate / tokens, persisted across restarts), uptime, model load time, live API request logs (API console), on-device crash log viewer
+- **Deployment aids**: RAM check with model-size recommendation, stay-awake-while-charging (with Android 15 permission fallback guide), vendor keep-alive guide (auto-detects ROM whitelist steps), config backup/restore (JSON, migrate to a new device in one file)
 - **Keep-alive stack** (the whole point):
   - Foreground service + persistent notification (Android 10–15, incl. Android 15 FGS launch restrictions)
   - `START_STICKY` auto-rebuild with persisted model config restored

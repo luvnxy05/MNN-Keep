@@ -1,6 +1,6 @@
 {
-  "latest_version": "0.1.1",
-  "update_message": "MNN Keep v0.1.1: crash-logs viewer, vendor keep-alive guide, update checker pointed at MNN Keep repos, custom icon, star link fixed.",
-  "update_message_zh": "MNN Keep v0.1.1：新增崩溃日志查看、厂商保活引导（自动识别 ROM）、更新检查改为官方 MNN Keep 仓库、专属图标、修复星标链接指向本仓库。",
-  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.1.1/MNN-Keep-v0.1.1.apk"
+  "latest_version": "0.2.0",
+  "update_message": "MNN Keep v0.2.0: request stats, uptime, config backup/restore, stay-awake, model hot-swap, scrollable console, RAM hint, live request logs.",
+  "update_message_zh": "MNN Keep v0.2.0：请求统计、运行时长、配置备份/恢复、充电常亮、模型热切换、滚动控制台、内存建议、实时请求日志。",
+  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.2.0/MNN-Keep-v0.2.0.apk"
 }
