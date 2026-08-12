@@ -21,7 +21,9 @@ object ApiServerConfig {
 
     //defaultconfigvalue
     private const val DEFAULT_PORT = 8080
-    private const val DEFAULT_IP_ADDRESS = "127.0.0.1"
+    // Default to listening on all interfaces: MNN Keep is meant to serve the
+    // LAN (NAS / home-assistant / smart-home agents), not just localhost.
+    private const val DEFAULT_IP_ADDRESS = "0.0.0.0"
     private const val DEFAULT_CORS_ENABLED = false
     private const val DEFAULT_CORS_ORIGINS = ""
     private const val DEFAULT_AUTH_ENABLED = true
