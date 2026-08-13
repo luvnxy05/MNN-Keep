@@ -732,4 +732,11 @@
     <string name="keepalive_adb_hint">\nADB (optional, most reliable):\n  adb shell dumpsys deviceidle whitelist +io.mnnkeep.app\n  adb shell settings put global stay_on_while_plugged_in 7   # stay awake while charging\n\nIf the device has a PIN/pattern lock, boot auto-start will NOT work after reboot (FBE) — use swipe lock or none.</string>
     <string name="console_keepalive_hint">Crash auto-restart enabled. Boot auto-start requires allowing this app in system settings.</string>
     <string name="api_key_copied">API Key copied</string>
+    <string name="console_developer">Developer: luvnxy05 / MikeDev</string>
+    <string name="console_link_gitee">Gitee project page</string>
+    <string name="console_link_github">GitHub project page</string>
+    <string name="console_privacy">Privacy policy</string>
+    <string name="console_license">Open-source notice</string>
+    <string name="privacy_content">MNN Keep is fully offline: no accounts, no analytics, no cloud. All inference runs on your device; crash logs stay local and are never uploaded.</string>
+    <string name="license_content">MNN Keep is an Apache 2.0 licensed fork of MNN-Chat (alibaba/MNN, Apache 2.0). Third-party components retain their original licenses. See the project pages for the full license text.</string>
 </resources>

@@ -81,6 +81,14 @@ class ServiceConsoleActivity : AppCompatActivity() {
         binding.buttonStayAwake.setOnClickListener { toggleStayAwake() }
         binding.buttonExportConfig.setOnClickListener { exportConfig() }
         binding.buttonImportConfig.setOnClickListener { importConfig() }
+        binding.linkGitee.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://gitee.com/MikeDev/MNN-Keep")))
+        }
+        binding.linkGithub.setOnClickListener {
+            startActivity(Intent(Intent.ACTION_VIEW, android.net.Uri.parse("https://github.com/luvnxy05/MNN-Keep")))
+        }
+        binding.linkPrivacy.setOnClickListener { showInfoDialog(R.string.console_privacy, R.string.privacy_content) }
+        binding.linkLicense.setOnClickListener { showInfoDialog(R.string.console_license, R.string.license_content) }
         binding.layoutModelRow.setOnClickListener { showModelPicker() }
         binding.buttonSwitchModel.setOnClickListener { showModelPicker() }
         binding.buttonCopyKey.setOnClickListener {
@@ -372,6 +380,14 @@ class ServiceConsoleActivity : AppCompatActivity() {
                 .setNegativeButton(android.R.string.cancel, null)
                 .show()
         }
+    }
+
+    private fun showInfoDialog(titleRes: Int, contentRes: Int) {
+        AlertDialog.Builder(this)
+            .setTitle(titleRes)
+            .setMessage(contentRes)
+            .setPositiveButton(android.R.string.ok, null)
+            .show()
     }
 
     private fun exportConfig() {

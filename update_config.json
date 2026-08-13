@@ -1,6 +1,6 @@
 {
-  "latest_version": "0.2.1",
-  "update_message": "MNN Keep v0.2.1: API server now listens on all interfaces (0.0.0.0) by default — ready for LAN use out of the box.",
-  "update_message_zh": "MNN Keep v0.2.1：API 服务默认监听所有网卡（0.0.0.0），装好即可局域网调用。",
-  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.2.1/MNN-Keep-v0.2.1.apk"
+  "latest_version": "0.2.2",
+  "update_message": "MNN Keep v0.2.2: developer info, project links (Gitee/GitHub), privacy policy & open-source notice on the console home page.",
+  "update_message_zh": "MNN Keep v0.2.2：控制台首页底部新增开发者信息、Gitee/GitHub 项目页链接、隐私协议与开源声明。",
+  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.2.2/MNN-Keep-v0.2.2.apk"
 }

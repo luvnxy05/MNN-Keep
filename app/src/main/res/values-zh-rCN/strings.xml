@@ -719,4 +719,11 @@
     <string name="keepalive_adb_hint">\nADB 加固（可选，最可靠）：\n  adb shell dumpsys deviceidle whitelist +io.mnnkeep.app\n  adb shell settings put global stay_on_while_plugged_in 7   # 充电常亮\n\n若设备设置了 PIN/图案锁，重启后开机自启将失效（FBE 加密）——请改用滑动锁或无锁。</string>
     <string name="console_keepalive_hint">崩溃自愈已开启；开机自启需在系统设置中允许本应用自启动</string>
     <string name="api_key_copied">API Key 已复制</string>
+    <string name="console_developer">开发者：luvnxy05 / MikeDev</string>
+    <string name="console_link_gitee">Gitee 项目页</string>
+    <string name="console_link_github">GitHub 项目页</string>
+    <string name="console_privacy">隐私协议</string>
+    <string name="console_license">开源声明</string>
+    <string name="privacy_content">MNN Keep 完全离线运行：无账号、无统计、无云端。所有推理均在设备端完成；崩溃日志仅保存在本机，绝不上传。</string>
+    <string name="license_content">MNN Keep 基于 MNN-Chat（alibaba/MNN，Apache 2.0）开源 fork，遵循 Apache 2.0 协议。第三方组件保留其原有版权声明。完整许可文本见项目页。</string>
 </resources>
