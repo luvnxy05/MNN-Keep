@@ -130,10 +130,20 @@ class OpenAIService : Service() {
 
         val notification = coordinator.getNotification()
         if (notification != null) {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                startForeground(ApiNotificationManager.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
-            } else {
-                startForeground(ApiNotificationManager.NOTIFICATION_ID, notification)
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    startForeground(ApiNotificationManager.NOTIFICATION_ID, notification, ServiceInfo.FOREGROUND_SERVICE_TYPE_DATA_SYNC)
+                } else {
+                    startForeground(ApiNotificationManager.NOTIFICATION_ID, notification)
+                }
+            } catch (e: Exception) {
+                // Android 12+/15 forbid starting a FGS while the app is in the
+                // background (START_STICKY rebuild, boot receiver, alarm retry).
+                // Letting this throw produced an infinite restart loop — the
+                // dreaded "app keeps stopping" dialog. Swallow it instead: the
+                // service keeps running without the notification and will be
+                // foregrounded on the next start while the app is visible.
+                Timber.tag(TAG).w("startForeground not allowed in background: ${e.message}")
             }
         }
 
