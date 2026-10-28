@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.app.ActivityManager
 import android.os.BatteryManager
+import android.os.Build
 import android.graphics.Color
 import android.os.Bundle
 import android.os.Environment
@@ -392,17 +393,39 @@ class ServiceConsoleActivity : AppCompatActivity() {
 
     private fun exportConfig() {
         val json = ConfigBackup.toJson(this)
-        val dir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: filesDir
-        val file = File(dir, "mnnkeep_config.json")
         try {
-            file.writeText(json)
-            val uri = FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
-            val send = Intent(Intent.ACTION_SEND).apply {
-                type = "application/json"
-                putExtra(Intent.EXTRA_STREAM, uri)
-                addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+            val uri = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+: write to the PUBLIC Downloads folder via MediaStore,
+                // otherwise the file lands in Android/data/... which the system
+                // file picker (SAF) cannot see — users could never re-import it.
+                val values = android.content.ContentValues().apply {
+                    put(android.provider.MediaStore.Downloads.DISPLAY_NAME, "mnnkeep_config.json")
+                    put(android.provider.MediaStore.Downloads.MIME_TYPE, "application/json")
+                    put(
+                        android.provider.MediaStore.Downloads.RELATIVE_PATH,
+                        Environment.DIRECTORY_DOWNLOADS
+                    )
+                }
+                contentResolver.insert(
+                    android.provider.MediaStore.Downloads.EXTERNAL_CONTENT_URI, values
+                )?.also { u ->
+                    contentResolver.openOutputStream(u)?.use { it.write(json.toByteArray()) }
+                }
+            } else {
+                // Legacy: app-specific dir (visible on pre-Android-11 file pickers).
+                val dir = getExternalFilesDir(Environment.DIRECTORY_DOWNLOADS) ?: filesDir
+                val file = File(dir, "mnnkeep_config.json")
+                file.writeText(json)
+                FileProvider.getUriForFile(this, "$packageName.fileprovider", file)
             }
-            startActivity(Intent.createChooser(send, getString(R.string.config_import_hint)))
+            if (uri != null) {
+                val send = Intent(Intent.ACTION_SEND).apply {
+                    type = "application/json"
+                    putExtra(Intent.EXTRA_STREAM, uri)
+                    addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION)
+                }
+                startActivity(Intent.createChooser(send, getString(R.string.config_import_hint)))
+            }
         } catch (e: Exception) {
             Toast.makeText(this, e.message ?: "export failed", Toast.LENGTH_LONG).show()
         }
