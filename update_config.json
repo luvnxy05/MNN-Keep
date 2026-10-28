@@ -1,6 +1,6 @@
 {
-  "latest_version": "0.2.3",
-  "update_message": "MNN Keep v0.2.3 (critical fix): stops the infinite restart loop that showed 'app keeps stopping' when the service was rebuilt in the background.",
-  "update_message_zh": "MNN Keep v0.2.3（重要修复）：解决后台重建服务时 startForeground 被系统拒绝导致的无限崩溃循环（屡次停止运行）。",
-  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.2.3/MNN-Keep-v0.2.3.apk"
+  "latest_version": "0.2.4",
+  "update_message": "MNN Keep v0.2.4: config backup now saves to public Downloads so the in-app restore picker can actually find it (previously unreachable under Android/data).",
+  "update_message_zh": "MNN Keep v0.2.4：配置备份改为保存到公共下载目录，应用内「恢复配置」可以正常找到备份文件（此前文件藏在 Android/data 下无法选中）。",
+  "download_url": "https://github.com/luvnxy05/MNN-Keep/releases/download/v0.2.4/MNN-Keep-v0.2.4.apk"
 }
